@@ -1,5 +1,6 @@
 # https://medium.com/@dmitryrastorguev/basic-user-authentication-login-for-flask-using-mongoengine-and-wtforms-922e64ef87fe
 
+from app.staycaytion import Staycation
 from flask_login import login_required, current_user
 from flask import render_template, request
 from app import app, db, login_manager
@@ -41,8 +42,8 @@ def upload():
             print("No create Action yet")
         elif type == 'upload':
             file = request.files.get('file')
-            a_chart = CHART(fdate=None, ldate=None, readings=None).save()
-            listOfDict = a_chart.get_dict_from_csv(file)
-            a_chart.insert_reading_data_into_database(listOfDict)
+            staycayPack = Staycation(uploads=None).save()
+            listOfDict = staycayPack.getDictFromCSV(file)
+            staycayPack.insertIntoDB(listOfDict)
         return render_template("upload.html", name=current_user.name, panel="Upload")
     

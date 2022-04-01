@@ -11,11 +11,12 @@ staycation = Blueprint('staycation', __name__)
 # Document being the csv file uploaded
 class Staycation(db.Document):
     meta = {'collection': 'staycation'}
-    name = db.StringField()
-    duration = db.Duration()
-    unitCost = db.IntField()
-    URL = db.StringField()
-    description = db.StringField()
+    uploads = db.DictField()
+    # name = db.StringField()
+    # duration = db.Duration()
+    # unitCost = db.IntField()
+    # URL = db.StringField()
+    # description = db.StringField()
     
     
     def getDictFromCSV(self, file):
@@ -28,7 +29,7 @@ class Staycation(db.Document):
     def insertIntoDB(self, data):
         # result = self.insert_many(data) 
         # return result
-        
+        packages = {}
         # fDate = datetime(3000, 1, 1)
         # lDate = datetime(2000, 12, 31)
         # fDate = datetime(3000, 1, 1)
@@ -37,12 +38,12 @@ class Staycation(db.Document):
         for item in data:
             
             # BMI(name=item['User'], date=myDate, bmi=item['BMI']).save()
-            if readings.get(item['User']):
-                readings[item['User']].append([item['Date'], item['BMI']])            
+            if packages.get(item['hotel_name']):
+                packages[item['hotel_name']].append([item['duration'], item['unit_cost'], item['image_url'], item['description']])            
             else:
-                readings[item['User']] = [[item['Date'], item['BMI']]]
+                packages[item['hotel_name']] = [[item['duration'], item['unit_cost'], item['image_url'], item['description']]]
             
         # dbd.readings.insert_one({"readings": readings, "fDate": fDate, "lDate": lDate})
-        self.update(__raw__={'$set': {'readings': readings,'fdate': fDate, 'ldate': lDate}})
+        self.update(__raw__={'$set': {'uploads': packages}})
     
     
