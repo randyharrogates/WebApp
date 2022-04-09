@@ -17,7 +17,11 @@ class Staycation(db.Document):
     # unitCost = db.IntField()
     # URL = db.StringField()
     # description = db.StringField()
-    
+    hotel_name = db.StringField()
+    duration = db.IntField()
+    unit_cost = db.FloatField()
+    image_url = db.URLField()
+    description = db.StringField()
     
     def getDictFromCSV(self, file):
         data = file.read().decode('utf-8')
@@ -47,3 +51,6 @@ class Staycation(db.Document):
         self.update(__raw__={'$set': {'uploads': packages}})
     
     
+@staycation.route('/process',methods= ['POST'])
+def process():
+    pass

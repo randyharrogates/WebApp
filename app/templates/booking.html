@@ -1,0 +1,59 @@
+<!-- @format -->
+
+{% extends "base.html" %} 
+{% block mainblockspecial %}
+<div>
+    <div class="row">
+        <div class="col col-sm-4 p-3">
+            <div class="card">
+                <div class="card-header">
+                    <!--Url for staycations-->
+                    <img class='img-fluid' src='https://bit.ly/3Ifjcn6'></img>
+                    
+                </div>
+                <!--Description-->
+                <div class="card-body">
+                    <!--Name-->
+                    <h5>Shangri-La Singapore</h5>
+                    <a>Treat the entire family to a luxurious staycation experience complete with world-class culinary experiences at The Singapore.</a>
+                    <!--Book button-->
+                    <!-- <br>
+                    <button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') }}';" type="button">Book</button> -->
+                </div>
+            </div>
+        </div>
+        <!-- date selection card -->
+        <div class="col col-sm-4 p-3 h-50">
+            <div class="card">
+                <div class="card-header">
+                    <!--Header-->
+                    <h3>Select This Offer</h3>
+                    
+                </div>
+                <!--Description-->
+                <div class="card-body">
+                    <!--Name-->
+                    <!-- <div class="form-group">
+                        <div class='input-group date' id='datetimepicker5'>
+                           <input type='text' class="form-control" />
+                           <span class="input-group-addon">
+                           <span class="glyphicon glyphicon-calendar"></span>
+                           </span>
+                        </div>
+                     </div> -->
+                    <form action="/booking" method="post" enctype="multipart/form-data">
+                        <label for="bookingDatePicker"><h5>Check_in_date</h5></label>
+                        <input class="form-control" type="date" id="bookingDatePicker" name="bookingDatePicker"></input>
+                        <br>
+                        <div>
+                            <button class="btn btn-sm-2 btn-primary" value="booking" type="submit">Booking</button>
+                        </div>
+                    </form>
+                    <!--Book button-->
+                    <!-- <br>
+                    <button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') }}';" type="button">Book</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

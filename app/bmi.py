@@ -53,6 +53,7 @@ def process():
     if len(bmidailyObjects) >= 1:
         new_bmi_average = bmidailyObjects[0].updatedBMI(bmilogObject.bmi)
         number = bmidailyObjects[0].numberOfMeasures
+        #.update (include save) 
         bmidailyObjects[0].update(__raw__={'$set': {'numberOfMeasures': number + 1, 'averageBMI': new_bmi_average}})
     else:
         bmidailyObject = BMIDAILY(name=current_user.name, date=today, numberOfMeasures=1, averageBMI = bmilogObject.bmi)

@@ -1,18 +1,33 @@
-{% extends "base.html" %}
-{% block mainblock %}
+<!-- @format -->
+
+{% extends "base.html" %} {% block mainblock %}
 <div class="card-header">
-  <h2>Upload recordings</h2>
+	<h2>Upload recordings</h2>
 </div>
 <div class="card-body">
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input name="type" type="hidden" value="upload">
-            <div>
-                <label for='upload'>Upload CSV file e.g. "admin@fitwell.com,2021-01-17T01:00,97,20,0,0,29"</label>
-                <input class="upload" id='upload' name='file' type='file' accept='.csv' required>
-            </div>
-            <div>
-                <input type="submit" value="Upload" type="Upload"/>
-            </div>
-        </form>
+	<form action="/upload" method="post" enctype="multipart/form-data">
+		<!-- For title and to return upload as value -->
+		<div>
+			<label for="upload">Upload CSV file</label>
+			<input name="type" type="hidden" value="upload" />
+		</div>
+		<!-- to let user choose which data type to upload -->
+		<div>
+			<label for="dataType">With data type of:</label>
+			<select id="dataType" name="dataType">
+				<option value="users">Users</option>
+				<option value="staycation">Staycation</option>
+				<option value="booking">Booking</option>
+			</select>
+		</div>
+		<!-- for choose file button -->
+		<div>
+			<input class="upload" id="upload" name="file" type="file" accept=".csv" required />
+		</div>
+		<!-- upload button -->
+		<div>
+			<input type="submit" value="Upload" type="Upload" />
+		</div>
+	</form>
 </div>
 {% endblock %}
