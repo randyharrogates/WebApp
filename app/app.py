@@ -1,8 +1,7 @@
 # https://medium.com/@dmitryrastorguev/basic-user-authentication-login-for-flask-using-mongoengine-and-wtforms-922e64ef87fe
 
-from app.staycaytion import Staycation
 from flask_login import login_required, current_user
-from flask import render_template, request
+from flask import render_template, request, jsonify, redirect, url_for
 from app import app, db, login_manager
 
 # Register Blueprint so we can factor routes
@@ -10,11 +9,18 @@ from app import app, db, login_manager
 from bmi import bmi
 from dashboard import dashboard, CHART
 from auth import auth
+from upload import upload, Upload
+from staycation import staycation, Staycation
+from booking import booking, Booking
+
 
 # register blueprint from respective module
 app.register_blueprint(dashboard)
 app.register_blueprint(auth)
 app.register_blueprint(bmi)
+app.register_blueprint(upload)
+app.register_blueprint(staycation)
+app.register_blueprint(booking)
 
 from users import User
 
@@ -29,7 +35,12 @@ def show_base():
 
 @app.route('/packages')
 def packages():
-    return render_template('packages.html', name=current_user.name, panel="Package", id='specialCard')
+    staycations = Staycation.objects()
+    # print(staycations)
+    # for i in staycations:
+    #     print(i.hotel_name)
+
+    return render_template('packages.html', name=current_user.name, panel="Package", id='specialCard', staycayList=staycations)
 
 @app.route("/upload", methods=['GET','POST'])
 @login_required
@@ -42,10 +53,18 @@ def upload():
         dataType= request.form.get('dataType')
         if type == 'upload':
             if dataType == 'staycation':
+                # get the file uploaded, convert CSV to list of Dict, store as a collection, save Staycation objects using the list.
+                print('Creating new collection...')
                 file = request.files.get('file')
-                staycayPack = Staycation(uploads=None).save()
-                listOfDict = staycayPack.getDictFromCSV(file)
-                staycayPack.insertIntoDB(listOfDict)
+                print('Getting uploads')
+                package = Upload(uploads=None).save()
+                listOfDict = package.getDictFromCSV(file)
+                print('converting csv to dict: ' ,  listOfDict)
+                package.insertIntoDB(listOfDict)
+                for item in listOfDict:
+                    Staycation(**item).save()
+                print('Staycations saved')
+                
             elif dataType == 'users':
                 pass
                 #Users implementation
@@ -53,16 +72,26 @@ def upload():
                 #Booking implementation
                 pass
         return render_template("upload.html", name=current_user.name, panel="Upload")
+
+
+@app.route("/booking", methods=['GET' , 'POST'])
+@app.route("/booking/<hotelName>", methods=['GET', 'POST'])
+def booking(hotelName=None):
+    #Get the staycation using hotel_name
+    currentStaycay = Staycation.objects(hotel_name=hotelName)
     
-@app.route("/booking", methods=['GET','POST'])
-def booking():
     if request.method == 'GET':
-        print('Goes to get')
-        return render_template("booking.html", name=current_user.name, panel="Booking", id='specialCard')
+        print('Getting booking template for: ' + hotelName)
+        return render_template("booking.html", name=current_user.name, panel="Booking", id='specialCard', staycayObj=currentStaycay, hotelName=hotelName)
     elif request.method == 'POST':
-        dateForm = request.form['bookingDatePicker']
-        print(dateForm)
-        
         print('Goes to post')
         #implement saving of booking here
-        return render_template("booking.html", name=current_user.name, panel="Booking", id='specialCard')
+        dateForm = request.form['bookingDatePicker']
+        print(dateForm)
+        # list in year, month, day
+        dateFormList = dateForm.split('-')
+        print(dateFormList)
+        
+        
+        return redirect(url_for('packages'))
+    

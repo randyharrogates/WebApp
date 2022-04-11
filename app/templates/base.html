@@ -51,7 +51,7 @@
 								</li>
 								{% else %}
 								<li class="nav-item">
-									<a href="packages" class="nav-link text-white p-3 mb-2 sidebar-link">
+									<a href="{{ url_for('packages')}}" class="nav-link text-white p-3 mb-2 sidebar-link">
 										<i class="fas fa-address-card text-light fa-lg mr-3"></i>
 										Packages
 									</a>
@@ -64,7 +64,7 @@
 									</a>
 								</li>
 								<li class="nav-item">
-									<a href="upload" class="nav-link text-white p-3 mb-2 sidebar-link">
+									<a href="{{ url_for('upload')}}" class="nav-link text-white p-3 mb-2 sidebar-link">
 										<i class="fas fa-cloud-upload-alt text-light fa-lg mr-3"></i>
 										Upload
 									</a>

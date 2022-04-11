@@ -4,103 +4,29 @@
 {% block mainblockspecial %}
 <div>
 	<div class="row">
+		<!-- loop to display cards -->
+		{% for obj in staycayList %}
 		<div class="col col-sm-4 p-3">
 			<div class= "card">
 				<div class="card-header">
 					<!--Url for staycations-->
-					<img class='img-fluid' src='https://bit.ly/3Ifjcn6'></img>
+					<img class='img-fluid' src={{obj.image_url}}></img>
 					
 				</div>
 				<!--Description-->
 				<div class="card-body">
 					<!--Name-->
-					<h5>Shangri-La Singapore</h5>
-					<a>Treat the entire family to a luxurious staycation experience complete with world-class culinary experiences at The Singapore.</a>
+					<h5>{{obj.hotel_name}}</h5>
+					<a>{{obj.description}}</a>
 					<!--Book button-->
 					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') }}';" type="button">Book</button>
+					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') +'/'+  obj.hotel_name}} ';" type="button" hotel_name="obj.hotel_name">Book</button>
 				</div>
 			</div>
 		</div>
-
-		<div class="col col-sm-4 p-3">
-			<div class= "card">
-				<div class="card-header">
-					<h3>head</h3>
-				</div>
-				<div class="card-body">
-					<h5>Name</h5>
-					<a>Description</a>
-					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" type="button">Book</button>
-				</div>
-			</div>	
-		</div>
-
-		<div class="col col-sm-4 p-3">
-			<div class= "card">
-				<div class="card-header">
-					<h3>head</h3>
-				</div>
-				<div class="card-body">
-					<h5>Name</h5>
-					<a>Description</a>
-					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" type="button">Book</button>
-				</div>
-			</div>	
-		</div>
+		{% endfor %}
 	</div>
-
-	<!-- second row -->
-	<div class="row">
-		<div class="col col-sm-4 p-3">
-			<div class= "card">
-				<div class="card-header">
-					<!--Url for staycations-->
-					<img class='img-fluid' src='https://bit.ly/3Ifjcn6'></img>
-					
-				</div>
-				<!--Description-->
-				<div class="card-body">
-					<!--Name-->
-					<h5>Shangri-La Singapore</h5>
-					<a>Treat the entire family to a luxurious staycation experience complete with world-class culinary experiences at The Singapore.</a>
-					<!--Book button-->
-					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" type="button">Book</button>
-				</div>
-			</div>
-		</div>
-
-		<div class="col col-sm-4 p-3">
-			<div class= "card">
-				<div class="card-header">
-					<h3>head</h3>
-				</div>
-				<div class="card-body">
-					<h5>Name</h5>
-					<a>Description</a>
-					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" type="button">Book</button>
-				</div>
-			</div>	
-		</div>
-
-		<div class="col col-sm-4 p-3">
-			<div class= "card">
-				<div class="card-header">
-					<h3>head</h3>
-				</div>
-				<div class="card-body">
-					<h5>Name</h5>
-					<a>Description</a>
-					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" type="button">Book</button>
-				</div>
-			</div>	
-		</div>
-	</div>
+</div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
