@@ -20,7 +20,7 @@
 					<a>{{obj.description}}</a>
 					<!--Book button-->
 					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') +'/'+  obj.hotel_name}} ';" type="button" hotel_name="obj.hotel_name">Book</button>
+					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') +'/'+  obj.id|string}} ';" type="button" hotel_name="obj.hotel_name">Book</button>
 				</div>
 			</div>
 		</div>

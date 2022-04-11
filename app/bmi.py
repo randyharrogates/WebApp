@@ -15,7 +15,6 @@ class BMILOG(db.Document):
     weight = db.FloatField()
     height = db.FloatField()
     bmi = db.FloatField()
-    
     def computeBMI(self, unit):
         if unit == 'm':
             bmi = self.weight / math.pow(self.height, 2)

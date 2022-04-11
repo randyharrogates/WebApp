@@ -25,7 +25,7 @@ class Upload(db.Document):
         return(list(dict_reader))
     
     
-    def insertIntoDB(self, data):
+    def insertIntoStaycationDB(self, data):
         # result = self.insert_many(data) 
         # return result
         packages = {}
@@ -43,6 +43,45 @@ class Upload(db.Document):
                 packages[item['hotel_name']] = [[item['duration'], item['unit_cost'], item['image_url'], item['description']]]
         # dbd.readings.insert_one({"readings": readings, "fDate": fDate, "lDate": lDate})
         self.update(__raw__={'$set': {'uploads': packages}})
+        
+    def insertIntoUserDB(self, data):
+        # result = self.insert_many(data) 
+        # return result
+        packages = {}
+        # fDate = datetime(3000, 1, 1)
+        # lDate = datetime(2000, 12, 31)
+        # fDate = datetime(3000, 1, 1)
+        # lDate = datetime(2000, 12, 31)
+
+        for item in data:
+            
+            # BMI(name=item['User'], date=myDate, bmi=item['BMI']).save()
+            if packages.get(item['name']):
+                packages[item['name']].append([item['email'], item['password']])
+            else:
+                packages[item['name']] = [[item['email'], item['password']]]
+        # dbd.readings.insert_one({"readings": readings, "fDate": fDate, "lDate": lDate})
+        self.update(__raw__={'$set': {'uploads': packages}})
+        
+    def insertIntoBookingDB(self, data):
+        # result = self.insert_many(data) 
+        # return result
+        packages = {}
+        # fDate = datetime(3000, 1, 1)
+        # lDate = datetime(2000, 12, 31)
+        # fDate = datetime(3000, 1, 1)
+        # lDate = datetime(2000, 12, 31)
+
+        for item in data:
+            
+            # BMI(name=item['User'], date=myDate, bmi=item['BMI']).save()
+            if packages.get(item['customer']):
+                packages[item['customer']].append([item['check_in_date'], item['hotel_name']])
+            else:
+                packages[item['customer']] = [[item['check_in_date'], item['hotel_name']]]
+        # dbd.readings.insert_one({"readings": readings, "fDate": fDate, "lDate": lDate})
+        self.update(__raw__={'$set': {'uploads': packages}})
+    
     
 
     

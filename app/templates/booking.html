@@ -43,7 +43,8 @@
                            </span>
                         </div>
                      </div> -->
-                    <form action="/booking" method="post" enctype="multipart/form-data">
+                    <form action="/booking/{{obj.id}}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" value={{obj.id}}></input>
                         <label for="bookingDatePicker"><h5>Check_in_date</h5></label>
                         <input class="form-control" type="date" id="bookingDatePicker" name="bookingDatePicker"></input>
                         <br>
