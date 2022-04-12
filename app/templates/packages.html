@@ -1,10 +1,12 @@
 <!-- @format -->
 
-{% extends "base.html" %} 
+{% extends "base.html" %}
+
 {% block mainblockspecial %}
 <div>
 	<div class="row">
 		<!-- loop to display cards -->
+		{% if staycayList != null %}
 		{% for obj in staycayList %}
 		<div class="col col-sm-4 p-3">
 			<div class= "card">
@@ -25,6 +27,7 @@
 			</div>
 		</div>
 		{% endfor %}
+		{% endif %}
 	</div>
 </div>
 <script src="https://d3js.org/d3.v4.min.js"></script>

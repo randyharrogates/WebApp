@@ -110,4 +110,36 @@
 // }
 $(function () {
 	$(".bookingBtn").click(function () {});
+
+	// $.ajax({
+	// 	url: "/dashboard",
+	// 	type: "GET",
+	// 	data: {
+	// 		customer: customer,
+	// 		check_in_date: check_in_date,
+	// 		hotel_name: hotel_name,
+	// 	},
+	// 	dataType: "jsonp", //you may use jsonp for cross origin request
+	// 	crossDomain: true,
+	// 	error: function () {
+	// 		alert("Error");
+	// 	},
+	// 	success: function (data, status, xhr) {
+	// 		let check_in_date = data.check_in_date;
+	// 		let customer = data.customer;
+	// 		let hotel_name = data.hotel_name;
+	// 		console.log(data);
+	// 		console.log(check_in_date + " " + customer + " " + hotel_name);
+	// 		// debugger
+	// if (bmi < 18.5) {
+	//     document.querySelector(".output_space > p").innerHTML += "Your Body Mass Index (BMI) is: "+(Math.round(bmi*100/100)).toFixed(2)+"<br>"+" Index Value is Under Weight"+"<br>";
+	// } else if ((bmi >= 25) && (bmi <= 29.9)) {
+	//     document.querySelector(".output_space > p").innerHTML += "Your Body Mass Index (BMI) is: "+(Math.round(bmi*100/100)).toFixed(2)+"<br>"+" Index Value is Over Weight"+"<br>";
+	// } else if (bmi >= 30) {
+	//     document.querySelector(".output_space > p").innerHTML += "Your Body Mass Index (BMI) is: "+(Math.round(bmi*100/100)).toFixed(2)+"<br>"+" Index Value is Obesse"+"<br>";
+	// } else {
+	//     document.querySelector(".output_space > p").innerHTML += "Your Body Mass Index (BMI) is: "+(Math.round(bmi*100/100)).toFixed(2)+"<br>"+" Index Value normal"+"<br>";
+	// }
+	// 	},
+	// });
 });

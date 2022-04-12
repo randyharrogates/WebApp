@@ -4,11 +4,12 @@ from flask_login import login_required, current_user
 from flask import render_template, request, jsonify, redirect, url_for
 from app import app, db, login_manager
 from datetime import datetime
+from mongoengine import *
 
 # Register Blueprint so we can factor routes
 # from bmi import bmi, get_dict_from_csv, insert_reading_data_into_database
 from bmi import bmi
-from dashboard import dashboard, CHART
+# from dashboard import dashboard, CHART
 from auth import auth
 from upload import upload, Upload
 from staycation import staycation, Staycation
@@ -16,7 +17,7 @@ from booking import booking, Booking
 
 
 # register blueprint from respective module
-app.register_blueprint(dashboard)
+# app.register_blueprint(dashboard)
 app.register_blueprint(auth)
 app.register_blueprint(bmi)
 app.register_blueprint(upload)
@@ -30,11 +31,15 @@ from users import User
 def load_user(user_id):
     return User.objects(pk=user_id).first()
 
+
+
 @app.route('/base')
 def show_base():
     return render_template('base.html')
 
+
 @app.route('/packages')
+@login_required
 def packages():
     staycations = Staycation.objects()
     # print(staycations)
@@ -85,6 +90,7 @@ def upload():
 
 @app.route("/booking", methods=['GET'])
 @app.route("/booking/<hotelId>", methods=['GET', 'POST'])
+@login_required
 def booking(hotelId):
     #Get the staycation using hotel_name
     currentStaycay = Staycation.objects(id=hotelId)
@@ -108,3 +114,70 @@ def booking(hotelId):
         
         return redirect(url_for('packages'))
     
+@app.route("/getDashboard", methods=['GET'])
+@login_required
+def loadDashboard():
+
+    print('goes to loadDashboard')
+    #Get all booking objectsin specified date range
+    kwargs = {}
+    start = datetime(2022, 1, 17)
+    end = datetime(2022, 3, 12)
+    raw_query = {'check_in_date': {'$gte': start, '$lte':end}}
+    chartObjects = Booking.objects(__raw__=raw_query)
+    
+    for i in chartObjects:
+        print(i)
+    
+    
+    
+    baseCost = Staycation.objects.distinct('unit_cost')
+    baseCostNames = Staycation.objects.distinct('hotel_name')
+    
+    staycationPrices = {}
+    for i in range(len(baseCost)):
+        staycationPrices[baseCostNames[i]] = baseCost[i]
+    
+    
+    #count prices
+    
+        
+    
+
+    
+    return jsonify({'costs': staycationPrices, 'bookings':chartObjects})
+    
+@app.route("/dashboard", methods=['GET'])
+@login_required
+def dashboard():
+
+    print('goes to dashboard')
+    # chartObjects = Booking.objects()
+    # # for i in chartObjects:
+    # #     print(i.hotel_name)
+    # labels = Booking.objects.distinct('hotel_name')
+    # baseCost = Staycation.objects.distinct('unit_cost')
+    # baseCostNames = Staycation.objects.distinct('hotel_name')
+    # print(labels)
+    # staycationPrices = {}
+    # for i in range(len(baseCost)):
+    #     staycationPrices[baseCostNames[i]] = baseCost[i]
+    # print(staycationPrices)
+        
+    
+
+    
+    return render_template('dashboard.html',name=current_user.name, panel="Dashboard")
+# @dashboard.route('/chart3', methods=['GET', 'POST'])
+# def chart3():
+#     if request.method == 'GET':
+#         #I want to get some data from the service
+#         return render_template('bmi_chart3.html', name=current_user.name, panel="BMI Chart")    #do nothing but to show index.html
+#     elif request.method == 'POST':
+#         #Get the values passed from the Front-end, do the BMI calculation, return the BMI back to front-end
+#         fDate = datetime(2021,1,17,0,0)
+#         lDate = datetime(2021,1,23,0,0) 
+#         chartobjects=CHART.objects(fdate=fDate, ldate=lDate)
+#         if len(chartobjects) >= 1:
+#             aveDict = chartobjects[0].get_average()
+#             return jsonify({'averages': aveDict})
