@@ -2,9 +2,9 @@
 
 {% extends "base.html" %} 
 {% block mainblockspecial %}
-{% for obj in staycayObj %}
 <div>
     <div class="row">
+    {% for obj in staycayObj %}
         <div class="col col-sm-4 p-3">
             <div class="card">
                 <div class="card-header">
@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
+        {% endfor%}
     </div>
 </div>
-{% endfor%}
 {% endblock %}
