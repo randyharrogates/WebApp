@@ -17,9 +17,6 @@
                     <!--Name-->
                     <h5>{{obj.hotel_name}}</h5>
                     <a>{{obj.description}}</a>
-                    <!--Book button-->
-                    <!-- <br>
-                    <button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') }}';" type="button">Book</button> -->
                 </div>
                 
             </div>
@@ -34,15 +31,6 @@
                 </div>
                 <!--Description-->
                 <div class="card-body">
-                    <!--Name-->
-                    <!-- <div class="form-group">
-                        <div class='input-group date' id='datetimepicker5'>
-                           <input type='text' class="form-control" />
-                           <span class="input-group-addon">
-                           <span class="glyphicon glyphicon-calendar"></span>
-                           </span>
-                        </div>
-                     </div> -->
                     <form action="/booking/{{obj.id}}" method="post" enctype="multipart/form-data">
                         <input type="hidden" value={{obj.id}}></input>
                         <label for="bookingDatePicker"><h5>Check_in_date</h5></label>
@@ -52,9 +40,6 @@
                             <button class="btn btn-sm-2 btn-primary" value="booking" type="submit">Submit</button>
                         </div>
                     </form>
-                    <!--Book button-->
-                    <!-- <br>
-                    <button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') }}';" type="button">Book</button> -->
                 </div>
             </div>
         </div>
