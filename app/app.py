@@ -7,9 +7,7 @@ from datetime import datetime
 from mongoengine import *
 
 # Register Blueprint so we can factor routes
-# from bmi import bmi, get_dict_from_csv, insert_reading_data_into_database
-from bmi import bmi
-# from dashboard import dashboard, CHART
+
 from auth import auth
 from upload import upload, Upload
 from staycation import staycation, Staycation
@@ -17,9 +15,7 @@ from booking import booking, Booking
 
 
 # register blueprint from respective module
-# app.register_blueprint(dashboard)
 app.register_blueprint(auth)
-app.register_blueprint(bmi)
 app.register_blueprint(upload)
 app.register_blueprint(staycation)
 app.register_blueprint(booking)
@@ -32,7 +28,6 @@ def load_user(user_id):
     return User.objects(pk=user_id).first()
 
 
-
 @app.route('/base')
 def show_base():
     return render_template('base.html')
@@ -42,9 +37,6 @@ def show_base():
 @login_required
 def packages():
     staycations = Staycation.objects()
-    # print(staycations)
-    # for i in staycations:
-    #     print(i.hotel_name)
 
     return render_template('packages.html', name=current_user.name, panel="Package", id='specialCard', staycayList=staycations)
 
@@ -118,8 +110,8 @@ def booking(hotelId):
 @login_required
 def loadDashboard():
 
-    print('goes to loadDashboard')
     #Get all booking objects in specified date range
+    print('Getting Booking objects...')
     kwargs = {}
     start = datetime(2022, 1, 17)
     end = datetime(2022, 3, 12)
@@ -133,7 +125,8 @@ def loadDashboard():
     xAxisObj = sorted(xAxisObj)
     for i in xAxisObj:
         xAxis.append(i.strftime("%Y-%m-%d"))
-    # print(xAxis)
+    
+    
     hotelObj = Staycation.objects()
     baseCost = Staycation.objects.distinct('unit_cost')
     hotelNames = Staycation.objects.distinct('hotel_name')
@@ -147,51 +140,24 @@ def loadDashboard():
     for i in xAxis:
         if i not in uniqueDates32:
             uniqueDates32.append(i)
-    print(uniqueDates32)
-    print(len(uniqueDates32))
-    #count prices\
+    #count prices
     finalNestedList = []
     for i in hotelObj:
         priceList = countTotalPrice(uniqueDates32, i.hotel_name, i.unit_cost)
         finalNestedList.append(priceList)
     
-        
-    
-
-    
+    print('Sending data to frontend...')
     return jsonify({'labels': hotelNames, 'bookings':chartObjects, 'xAxis':uniqueDates32, 'prices':finalNestedList})
     
 @app.route("/dashboard", methods=['GET'])
 @login_required
 def dashboard():
-
-    print('goes to dashboard')
-    # chartObjects = Booking.objects()
-    # # for i in chartObjects:
-    # #     print(i.hotel_name)
-    # labels = Booking.objects.distinct('hotel_name')
-    # baseCost = Staycation.objects.distinct('unit_cost')
-    # hotelNames = Staycation.objects.distinct('hotel_name')
-    # print(labels)
-    # staycationPrices = {}
-    # for i in range(len(baseCost)):
-    #     staycationPrices[hotelNames[i]] = baseCost[i]
-    # print(staycationPrices)
-    
+    print('Rendering Dashboard...')
     return render_template('dashboard.html',name=current_user.name, panel="Dashboard")
-# @dashboard.route('/chart3', methods=['GET', 'POST'])
-# def chart3():
-#     if request.method == 'GET':
-#         #I want to get some data from the service
-#         return render_template('bmi_chart3.html', name=current_user.name, panel="BMI Chart")    #do nothing but to show index.html
-#     elif request.method == 'POST':
-#         #Get the values passed from the Front-end, do the BMI calculation, return the BMI back to front-end
-#         fDate = datetime(2021,1,17,0,0)
-#         lDate = datetime(2021,1,23,0,0) 
-#         chartobjects=CHART.objects(fdate=fDate, ldate=lDate)
-#         if len(chartobjects) >= 1:
-#             aveDict = chartobjects[0].get_average()
-#             return jsonify({'averages': aveDict})
+
+
+
+
 
 #function to get list of prices of a hotel
 def countTotalPrice(listOfUniqueDates, hotelName, price):
@@ -203,7 +169,6 @@ def countTotalPrice(listOfUniqueDates, hotelName, price):
     actualDates = Booking.objects(hotel_name = hotelName)
     for i in actualDates:
         listOfActualDatesByHotel.append(i.check_in_date.strftime("%Y-%m-%d"))
-    # print(len(listOfUniqueDates))
     
     hotelList = []
     for i in listOfUniqueDates:

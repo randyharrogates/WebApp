@@ -37,7 +37,7 @@ def login():
             if validateUser:
                 if check_password_hash(validateUser['password'], form.password.data):
                     login_user(validateUser)
-                    return redirect(url_for('dashboard'))
+                    return redirect(url_for('packages'))
                 else:
                     form.password.errors.append("User Password Not Correct")
             else:
