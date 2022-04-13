@@ -155,17 +155,12 @@
 // })
 
 function getChartDates() {}
-
-var ctx = document.getElementById("myChart");
+var ctx = document.getElementById("myChart").getContext("2d");
 
 $.ajax({
 	url: "/getDashboard",
 	type: "GET",
-	data: {
-		// customer: customer,
-		// check_in_date: check_in_date,
-		// hotel_name: hotel_name,
-	},
+	data: {},
 	// dataType: "json", //you may use jsonp for cross origin request
 	// crossDomain: true,
 	error: function () {
@@ -178,41 +173,67 @@ $.ajax({
 		// let customer = data.customer;
 		// let hotel_name = data.hotel_name;
 		console.log(data);
-		alert("success" + data);
-		// console.log(check_in_date + " " + customer + " " + hotel_name);
-		// var averages = data.averages;
-		// var vLabels = [];
-		// var vData = [];
+		var myChart = new Chart(ctx, {
+			type: "line",
+			data: {
+				labels: data.xAxis,
+				datasets: [],
+			},
+			options: {
+				responsive: true,
+				maintainaspectratio: false,
+				title: {
+					display: true,
+					text: "World population per region (in millions)",
+				},
+			},
+		});
 
-		// for (const [key, values] of Object.entries(averages)) {
-		// 	vLabels.push(key);
-		// 	vData.push(values);
-		// }
-
-		// var myChart = new Chart(ctx, {
-		// 	data: {
-		// 		labels: {{}},
-		// 		datasets: [],
-		// 	},
-		// 	options: {
-		// 		responsive: false,
-		// 	},
-		// });
-
-		// 	debugger;
-		// 	myChart.data.datasets.push({
-		// 		label: "Average",
-		// 		type: "bar",
-		// 		borderColor: "#" + (0x1ff0000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
-		// 		borderColor: "#" + (0x1100000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
-		// 		backgroundColor: "rgba(249, 238, 236, 0.74)",
-		// 		data: vData,
-		// 		spanGaps: true,
-		// 	});
-		// myChart.update();
+		for (i = 0; i < data.labels.length; i++) {
+			myChart.data.datasets.push({
+				label: data.labels[i],
+				type: "line",
+				// borderColor: '#'+(0x1ff0000+Math.random()*0xffffff).toString(16).substr(1,6),
+				borderColor: "#" + (0x1100000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
+				backgroundColor: "rgba(249, 238, 236, 0.74)",
+				data: data.prices[i],
+				spanGaps: true,
+			});
+			myChart.update();
+		}
 	},
 });
+// console.log(check_in_date + " " + customer + " " + hotel_name);
+// var averages = data.averages;
+// var vLabels = [];
+// var vData = [];
 
+// for (const [key, values] of Object.entries(averages)) {
+// 	vLabels.push(key);
+// 	vData.push(values);
+// }
+
+// var myChart = new Chart(ctx, {
+// 	data: {
+// 		labels: {{}},
+// 		datasets: [],
+// 	},
+// 	options: {
+// 		responsive: false,
+// 	},
+// });
+
+// 	debugger;
+// 	myChart.data.datasets.push({
+// 		label: "Average",
+// 		type: "bar",
+// 		borderColor: "#" + (0x1ff0000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
+// 		borderColor: "#" + (0x1100000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
+// 		backgroundColor: "rgba(249, 238, 236, 0.74)",
+// 		data: vData,
+// 		spanGaps: true,
+// 	});
+// myChart.update();
 // let myChart = new Chart(document.getElementById("myChart"), {
 // 	type: "line",
 // 	data: {

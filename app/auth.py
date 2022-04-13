@@ -17,7 +17,7 @@ def register():
                 hashpass = generate_password_hash(form.password.data, method='sha256')
                 newUser = User(email=form.email.data,password=hashpass, name=form.name.data).save()
                 login_user(newUser)
-                return redirect(url_for('dashboard.render_dashboard'))
+                return redirect(url_for('dashboard'))
             else:
                 form.email.errors.append("User already existed")
                 render_template('register.html', form=form, panel="Register")    
@@ -37,7 +37,7 @@ def login():
             if validateUser:
                 if check_password_hash(validateUser['password'], form.password.data):
                     login_user(validateUser)
-                    return redirect(url_for('dashboard.render_dashboard'))
+                    return redirect(url_for('dashboard'))
                 else:
                     form.password.errors.append("User Password Not Correct")
             else:

@@ -119,33 +119,47 @@ def booking(hotelId):
 def loadDashboard():
 
     print('goes to loadDashboard')
-    #Get all booking objectsin specified date range
+    #Get all booking objects in specified date range
     kwargs = {}
     start = datetime(2022, 1, 17)
     end = datetime(2022, 3, 12)
     raw_query = {'check_in_date': {'$gte': start, '$lte':end}}
+    #Getting data for x-axis
     chartObjects = Booking.objects(__raw__=raw_query)
-    
+    xAxisObj = []
+    xAxis = []
     for i in chartObjects:
-        print(i)
-    
-    
-    
+        xAxisObj.append(i.check_in_date)
+    xAxisObj = sorted(xAxisObj)
+    for i in xAxisObj:
+        xAxis.append(i.strftime("%Y-%m-%d"))
+    # print(xAxis)
+    hotelObj = Staycation.objects()
     baseCost = Staycation.objects.distinct('unit_cost')
-    baseCostNames = Staycation.objects.distinct('hotel_name')
+    hotelNames = Staycation.objects.distinct('hotel_name')
     
     staycationPrices = {}
     for i in range(len(baseCost)):
-        staycationPrices[baseCostNames[i]] = baseCost[i]
+        staycationPrices[hotelNames[i]] = baseCost[i]
     
-    
-    #count prices
+    #get unique dates
+    uniqueDates32 = []
+    for i in xAxis:
+        if i not in uniqueDates32:
+            uniqueDates32.append(i)
+    print(uniqueDates32)
+    print(len(uniqueDates32))
+    #count prices\
+    finalNestedList = []
+    for i in hotelObj:
+        priceList = countTotalPrice(uniqueDates32, i.hotel_name, i.unit_cost)
+        finalNestedList.append(priceList)
     
         
     
 
     
-    return jsonify({'costs': staycationPrices, 'bookings':chartObjects})
+    return jsonify({'labels': hotelNames, 'bookings':chartObjects, 'xAxis':uniqueDates32, 'prices':finalNestedList})
     
 @app.route("/dashboard", methods=['GET'])
 @login_required
@@ -157,15 +171,12 @@ def dashboard():
     # #     print(i.hotel_name)
     # labels = Booking.objects.distinct('hotel_name')
     # baseCost = Staycation.objects.distinct('unit_cost')
-    # baseCostNames = Staycation.objects.distinct('hotel_name')
+    # hotelNames = Staycation.objects.distinct('hotel_name')
     # print(labels)
     # staycationPrices = {}
     # for i in range(len(baseCost)):
-    #     staycationPrices[baseCostNames[i]] = baseCost[i]
+    #     staycationPrices[hotelNames[i]] = baseCost[i]
     # print(staycationPrices)
-        
-    
-
     
     return render_template('dashboard.html',name=current_user.name, panel="Dashboard")
 # @dashboard.route('/chart3', methods=['GET', 'POST'])
@@ -181,3 +192,26 @@ def dashboard():
 #         if len(chartobjects) >= 1:
 #             aveDict = chartobjects[0].get_average()
 #             return jsonify({'averages': aveDict})
+
+#function to get list of prices of a hotel
+def countTotalPrice(listOfUniqueDates, hotelName, price):
+    # one list of prices must have 17 values
+    # one list is for one hotel_name (total 6 lists)
+    
+    # query for dates involved using hotel name
+    listOfActualDatesByHotel = []
+    actualDates = Booking.objects(hotel_name = hotelName)
+    for i in actualDates:
+        listOfActualDatesByHotel.append(i.check_in_date.strftime("%Y-%m-%d"))
+    # print(len(listOfUniqueDates))
+    
+    hotelList = []
+    for i in listOfUniqueDates:
+        currentList = []
+        currentList = [date for date in listOfActualDatesByHotel if date == i]
+        lengthOfList = len(currentList)
+        # print(lengthOfList)
+        totalPriceForI = lengthOfList * price
+        hotelList.append(totalPriceForI)
+    
+    return hotelList
