@@ -84,7 +84,7 @@ def upload():
 @app.route("/booking/<hotelId>", methods=['GET', 'POST'])
 @login_required
 def booking(hotelId):
-    #Get the staycation using hotel_name
+    #Get the staycation using hoteliDS
     currentStaycay = Staycation.objects(id=hotelId)
     
     if request.method == 'GET':

@@ -1,5 +1,6 @@
 {% macro render_field(field) %}
 
+<!-- used to render the error during login -->
 <div class="form-group">
     <label for="{{ field.name }} ">{{ field.label.text }}</label>
     {{ field(class_='form-control', **kwargs)|safe }}

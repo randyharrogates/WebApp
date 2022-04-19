@@ -1,4 +1,3 @@
-/** @format */
 
 function getChartDates() {}
 var ctx = document.getElementById("myChart").getContext("2d");
