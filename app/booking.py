@@ -8,9 +8,9 @@ import io
 
 booking = Blueprint('booking', __name__)
 
+#class model for booking
 class Booking(db.Document):
-    meta = {'collection': 'booking'}
-    # uploads = db.DictField()                                                                                                                                                                                                                                         
+    meta = {'collection': 'booking'}                                                                                                                                                                                                                                        
     check_in_date = db.DateTimeField()
     customer = db.EmailField()
     hotel_name = db.StringField()

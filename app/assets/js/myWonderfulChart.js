@@ -1,18 +1,19 @@
 
-function getChartDates() {}
-var ctx = document.getElementById("myChart").getContext("2d");
-
+// define ctx as variable for chart
+var ctx = document.getElementById("myWonderfulChart").getContext("2d");
+// use ajax to get data from endpoint
 $.ajax({
 	url: "/getDashboard",
 	type: "GET",
 	data: {},
+	// If error alert with error message
 	error: function () {
 		alert("Error");
 	},
-
-	success: function (data, status, xhr) {
+	// if success, render chart
+	success: function (data) {
 		console.log(data);
-		var myChart = new Chart(ctx, {
+		var myWonderfulChart = new Chart(ctx, {
 			type: "line",
 			data: {
 				labels: data.xAxis,
@@ -23,13 +24,13 @@ $.ajax({
 				maintainaspectratio: false,
 				title: {
 					display: true,
-					text: "World population per region (in millions)",
+					text: "Total daily booking income for each hotel",
 				},
-			},
+			}
 		});
 
 		for (i = 0; i < data.labels.length; i++) {
-			myChart.data.datasets.push({
+			myWonderfulChart.data.datasets.push({
 				label: data.labels[i],
 				type: "line",
 				borderColor: "#" + (0x1100000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
@@ -37,7 +38,7 @@ $.ajax({
 				data: data.prices[i],
 				spanGaps: true,
 			});
-			myChart.update();
+			myWonderfulChart.update();
 		}
 	},
 });

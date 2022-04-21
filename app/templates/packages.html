@@ -21,7 +21,8 @@
 					<a>{{obj.description}}</a>
 					<!--Book button-->
 					<br>
-					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for(\'booking\') +'/'+  obj.id|string}} ';" type="button" hotel_name="obj.hotel_name">Book</button>
+					<!--Renders the url for specific booking for the particular hotel using its id-->
+					<button class="btn btn-sm-2 btn-primary" id="bookingBtn" onclick="window.location.href = '{{ url_for('booking') +'/'+  obj.id|string}} ';" type="button" hotel_name="obj.hotel_name">Book</button>
 				</div>
 			</div>
 		</div>
@@ -29,7 +30,6 @@
 		{% endif %}
 	</div>
 </div>
-<script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 {% endblock %}

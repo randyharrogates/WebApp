@@ -5,8 +5,10 @@ from flask import Blueprint, request, redirect, render_template, url_for, flash
 from forms import RegForm
 from users import User
 
+#blueprint defined to use auth.route
 auth = Blueprint('auth', __name__)
 
+#Used for register
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegForm()
@@ -24,11 +26,11 @@ def register():
             
     return render_template('register.html', form=form, panel="Register")
 
+#Used for login rendering
 @auth.route('/login', methods=['GET', 'POST'])
 @auth.route('/')
 def login():
-    # if current_user.is_authenticated == True:
-    #     return redirect(url_for('dashboard.render_dashboard'))
+    
     form = RegForm()
     if request.method == 'POST':
         print(request.form.get('checkbox'))
@@ -44,6 +46,7 @@ def login():
                 form.email.errors.append("No Such User")
     return render_template('login.html', form=form, panel="Login")
 
+#Used for logout rendering
 @auth.route('/logout', methods = ['GET'])
 @login_required
 def logout():

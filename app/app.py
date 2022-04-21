@@ -6,22 +6,15 @@ from app import app, db, login_manager
 from datetime import datetime
 from mongoengine import *
 
-# Register Blueprint so we can factor routes
 
 from auth import auth
-from upload import upload, Upload
-from staycation import staycation, Staycation
-from booking import booking, Booking
-
-
-# register blueprint from respective module
-app.register_blueprint(auth)
-app.register_blueprint(upload)
-app.register_blueprint(staycation)
-app.register_blueprint(booking)
-
+from upload import Upload
+from staycation import  Staycation
+from booking import Booking
 from users import User
 
+#Register blueprint for auth for login, logout and register
+app.register_blueprint(auth)
 # Load the current user if any
 @login_manager.user_loader
 def load_user(user_id):
@@ -60,19 +53,19 @@ def upload():
             
             if dataType == 'staycation':
                 #save all staycations into db
-                package.insertIntoStaycationDB(listOfDict)
+                # package.insertIntoStaycationDB(listOfDict)
                 for item in listOfDict:
                     Staycation(**item).save()
                 print('Staycations saved')
                 
             elif dataType == 'users':
-                package.insertIntoUserDB(listOfDict)
+                # package.insertIntoUserDB(listOfDict)
                 for item in listOfDict:
                     User(**item).save()
                 print('users saved')
                 #Users implementation
             elif dataType == 'booking':
-                package.insertIntoBookingDB(listOfDict)
+                # package.insertIntoBookingDB(listOfDict)
                 for item in listOfDict:
                     Booking(**item).save()
                 print('Bookings saved')
@@ -122,11 +115,13 @@ def loadDashboard():
     xAxis = []
     for i in chartObjects:
         xAxisObj.append(i.check_in_date)
+    #sort dates
     xAxisObj = sorted(xAxisObj)
+    #convert dates to string
     for i in xAxisObj:
         xAxis.append(i.strftime("%Y-%m-%d"))
     
-    
+    #get all relavant objects
     hotelObj = Staycation.objects()
     baseCost = Staycation.objects.distinct('unit_cost')
     hotelNames = Staycation.objects.distinct('hotel_name')
@@ -147,6 +142,7 @@ def loadDashboard():
         finalNestedList.append(priceList)
     
     print('Sending data to frontend...')
+    #Return json object to endpoint
     return jsonify({'labels': hotelNames, 'bookings':chartObjects, 'xAxis':uniqueDates32, 'prices':finalNestedList})
     
 @app.route("/dashboard", methods=['GET'])
@@ -161,7 +157,7 @@ def dashboard():
 
 #function to get list of prices of a hotel
 def countTotalPrice(listOfUniqueDates, hotelName, price):
-    # one list of prices must have 17 values
+    # one list of prices must have 32 values
     # one list is for one hotel_name (total 6 lists)
     
     # query for dates involved using hotel name
@@ -175,8 +171,12 @@ def countTotalPrice(listOfUniqueDates, hotelName, price):
         currentList = []
         currentList = [date for date in listOfActualDatesByHotel if date == i]
         lengthOfList = len(currentList)
-        # print(lengthOfList)
+        #Total price per booking and not per day
         totalPriceForI = lengthOfList * price
         hotelList.append(totalPriceForI)
-    
+        #convert all 0 values to 'n/a'
+        for i in range(len(hotelList)):
+            hotelList[i] = str(hotelList[i])   
+            if hotelList[i] == '0.0':
+                hotelList[i] = 'n/a' 
     return hotelList
