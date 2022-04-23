@@ -14,5 +14,5 @@ class Booking(db.Document):
     check_in_date = db.DateTimeField()
     customer = db.EmailField()
     hotel_name = db.StringField()
-    
+    staycation = db.ReferenceField('staycation')
     

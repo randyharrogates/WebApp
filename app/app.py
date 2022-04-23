@@ -77,7 +77,7 @@ def upload():
 @app.route("/booking/<hotelId>", methods=['GET', 'POST'])
 @login_required
 def booking(hotelId):
-    #Get the staycation using hoteliDS
+    #Get the staycation using hoteliDs
     currentStaycay = Staycation.objects(id=hotelId)
     
     if request.method == 'GET':
@@ -105,19 +105,22 @@ def loadDashboard():
 
     #Get all booking objects in specified date range
     print('Getting Booking objects...')
-    kwargs = {}
-    start = datetime(2022, 1, 17)
-    end = datetime(2022, 3, 12)
-    raw_query = {'check_in_date': {'$gte': start, '$lte':end}}
+    # kwargs = {}
+    # start = datetime(2022, 1, 17)
+    # end = datetime(2022, 3, 12)
+    # raw_query = {'check_in_date': {'$gte': start, '$lte':end}}
     #Getting data for x-axis
-    chartObjects = Booking.objects(__raw__=raw_query)
+    # __raw__=raw_query
+    chartObjects = Booking.objects()
     xAxisObj = []
     xAxis = []
     for i in chartObjects:
         xAxisObj.append(i.check_in_date)
     #sort dates
+    #dates is in datetimeformat
     xAxisObj = sorted(xAxisObj)
     #convert dates to string
+    #dates is in string format
     for i in xAxisObj:
         xAxis.append(i.strftime("%Y-%m-%d"))
     
@@ -126,24 +129,22 @@ def loadDashboard():
     baseCost = Staycation.objects.distinct('unit_cost')
     hotelNames = Staycation.objects.distinct('hotel_name')
     
-    staycationPrices = {}
-    for i in range(len(baseCost)):
-        staycationPrices[hotelNames[i]] = baseCost[i]
+    
     
     #get unique dates
-    uniqueDates32 = []
+    uniqueDates = []
     for i in xAxis:
-        if i not in uniqueDates32:
-            uniqueDates32.append(i)
+        if i not in uniqueDates:
+            uniqueDates.append(i)
     #count prices
     finalNestedList = []
     for i in hotelObj:
-        priceList = countTotalPrice(uniqueDates32, i.hotel_name, i.unit_cost)
+        priceList = countTotalPrice(uniqueDates, i.hotel_name, i.unit_cost)
         finalNestedList.append(priceList)
     
     print('Sending data to frontend...')
     #Return json object to endpoint
-    return jsonify({'labels': hotelNames, 'bookings':chartObjects, 'xAxis':uniqueDates32, 'prices':finalNestedList})
+    return jsonify({'labels': hotelNames, 'bookings':chartObjects, 'xAxis':uniqueDates, 'prices':finalNestedList})
     
 @app.route("/dashboard", methods=['GET'])
 @login_required
@@ -161,18 +162,32 @@ def countTotalPrice(listOfUniqueDates, hotelName, price):
     # one list is for one hotel_name (total 6 lists)
     
     # query for dates involved using hotel name
-    listOfActualDatesByHotel = []
+    listOfActualDatesByHotelStr = []
     actualDates = Booking.objects(hotel_name = hotelName)
+    staycationObj = Staycation.objects(hotel_name = hotelName)
+    #Get the particular duration of hotel involved
+    duration = 0
+    for i in staycationObj:
+        duration += int(i.duration)
+    #get the actual booking dates of the hotel involved
+    actualDatesList = []
     for i in actualDates:
-        listOfActualDatesByHotel.append(i.check_in_date.strftime("%Y-%m-%d"))
+        actualDatesList.append(i.check_in_date)
+    #Add in more dates according to duration
     
+    #Conver to string
+    for i in actualDatesList:
+        listOfActualDatesByHotelStr.append(i.strftime("%Y-%m-%d"))
+    
+    #Do a for loop to get a the list of values
     hotelList = []
     for i in listOfUniqueDates:
         currentList = []
-        currentList = [date for date in listOfActualDatesByHotel if date == i]
+        currentList = [date for date in listOfActualDatesByHotelStr if date == i]
         lengthOfList = len(currentList)
-        #Total price per booking and not per day
-        totalPriceForI = lengthOfList * price
+        print(lengthOfList)
+        #Total price  per day
+        totalPriceForI = lengthOfList * price * duration
         hotelList.append(totalPriceForI)
         #convert all 0 values to 'n/a'
         for i in range(len(hotelList)):
@@ -180,3 +195,5 @@ def countTotalPrice(listOfUniqueDates, hotelName, price):
             if hotelList[i] == '0.0':
                 hotelList[i] = 'n/a' 
     return hotelList
+
+
