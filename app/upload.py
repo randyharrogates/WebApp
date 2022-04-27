@@ -13,7 +13,7 @@ class Upload(db.Document):
     meta = {'collection': 'upload'}
     uploads = db.DictField()                                                                                                                                                                                                                                         
     
-    # Function used to convert the csv file to a list of dict to save into db
+    # Method used to convert the csv file to a list of dict to save into db
     def getDictFromCSV(self, file):
         data = file.read().decode('utf-8')
         dict_reader = csv.DictReader(io.StringIO(data), delimiter=',', quotechar='"')

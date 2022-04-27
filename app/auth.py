@@ -55,6 +55,7 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
+#To be deleted
 @auth.route('/reset')
 @login_required
 def clean():

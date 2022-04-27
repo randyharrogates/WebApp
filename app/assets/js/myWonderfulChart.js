@@ -16,6 +16,7 @@ $.ajax({
 		var myWonderfulChart = new Chart(ctx, {
 			type: "line",
 			data: {
+				//Labels for xAxis (dates)
 				labels: data.xAxis,
 				datasets: [],
 			},
@@ -28,7 +29,7 @@ $.ajax({
 				},
 			}
 		});
-
+		// Push relevant data and pupoulate into chart
 		for (i = 0; i < data.labels.length; i++) {
 			myWonderfulChart.data.datasets.push({
 				label: data.labels[i],

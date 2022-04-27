@@ -15,19 +15,19 @@ from users import User
 
 #Register blueprint for auth for login, logout and register
 app.register_blueprint(auth)
-# Load the current user if any
 
 
+#To handle login and load current user
 @login_manager.user_loader
 def load_user(user_id):
     return User.objects(pk=user_id).first()
 
-
+#To render base template
 @app.route('/base')
 def show_base():
     return render_template('base.html')
 
-
+#to render staycation packages
 @app.route('/packages')
 @login_required
 def packages():
@@ -45,7 +45,7 @@ def upload():
         type = request.form.get('type')
         dataType= request.form.get('dataType')
         if type == 'upload':
-            # get the file uploaded, convert CSV to list of Dict, store as a collection, save Staycation objects using the list.
+            # get the file uploaded, convert CSV to list of Dict, store as a collection for all uploads
             print('Creating new collection...')
             file = request.files.get('file')
             print('Getting uploads')
@@ -55,19 +55,18 @@ def upload():
             
             if dataType == 'staycation':
                 #save all staycations into db
-                # package.insertIntoStaycationDB(listOfDict)
                 for item in listOfDict:
                     Staycation(**item).save()
                 print('Staycations saved')
                 
             elif dataType == 'users':
-                # package.insertIntoUserDB(listOfDict)
+                #save all users into db
                 for item in listOfDict:
                     User(**item).save()
                 print('users saved')
                 #Users implementation
             elif dataType == 'booking':
-                # package.insertIntoBookingDB(listOfDict)
+                #save all bookings into db
                 for item in listOfDict:
                     Booking(**item).save()
                 print('Bookings saved')
@@ -105,17 +104,12 @@ def booking(hotelId):
 @login_required
 def loadDashboard():
 
-    #Get all booking objects in specified date range
+    #Get all booking objects
     print('Getting Booking objects...')
-    # kwargs = {}
-    # start = datetime(2022, 1, 17)
-    # end = datetime(2022, 3, 12)
-    # raw_query = {'check_in_date': {'$gte': start, '$lte':end}}
-    #Getting data for x-axis
-    # __raw__=raw_query
     chartObjects = Booking.objects()
     xAxisObj = []
     xAxis = []
+    #Get dates
     for i in chartObjects:
         xAxisObj.append(i.check_in_date)
     #sort dates
@@ -138,7 +132,7 @@ def loadDashboard():
     for i in xAxis:
         if i not in uniqueDates:
             uniqueDates.append(i)
-    #count prices
+    #count prices for all 6 hotels
     finalNestedList = []
     for i in hotelObj:
         priceList = countTotalPrice(uniqueDates, i.hotel_name, i.unit_cost)
@@ -160,7 +154,7 @@ def dashboard():
 
 #function to get list of prices of a hotel
 def countTotalPrice(listOfUniqueDates, hotelName, price):
-    # one list of prices must have 32 values
+    
     # one list is for one hotel_name (total 6 lists)
     
     # query for dates involved using hotel name
