@@ -16,6 +16,8 @@ from users import User
 #Register blueprint for auth for login, logout and register
 app.register_blueprint(auth)
 # Load the current user if any
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.objects(pk=user_id).first()
@@ -127,7 +129,7 @@ def loadDashboard():
     #get all relavant objects
     hotelObj = Staycation.objects()
     baseCost = Staycation.objects.distinct('unit_cost')
-    hotelNames = Staycation.objects.distinct('hotel_name')
+    hotelNames = Staycation.objects.distinct('hotel_name') 
     
     
     

@@ -4,6 +4,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 from flask import Blueprint, request, redirect, render_template, url_for, flash
 from forms import RegForm
 from users import User
+from staycation import Staycation
+from booking import Booking
 
 #blueprint defined to use auth.route
 auth = Blueprint('auth', __name__)
@@ -53,3 +55,11 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
+@auth.route('/reset')
+@login_required
+def clean():
+    logout_user()
+    User.objects().delete()
+    Staycation.objects().delete()
+    Booking.objects().delete()
+    return render_template('login.html', form=RegForm(), response_msg="Database has been cleaned")
