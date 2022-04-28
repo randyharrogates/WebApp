@@ -181,7 +181,6 @@ def countTotalPrice(listOfUniqueDates, hotelName, price):
         currentList = []
         currentList = [date for date in listOfActualDatesByHotelStr if date == i]
         lengthOfList = len(currentList)
-        print(lengthOfList)
         #Total price  per day
         totalPriceForI = lengthOfList * price * duration
         hotelList.append(totalPriceForI)
