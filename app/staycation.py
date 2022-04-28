@@ -1,9 +1,4 @@
-
-
-from datetime import datetime, timedelta, date
 from app import db
-
-
 
 #staycation class for staycation packages
 

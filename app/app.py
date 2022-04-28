@@ -1,4 +1,4 @@
-# https://medium.com/@dmitryrastorguev/basic-user-authentication-login-for-flask-using-mongoengine-and-wtforms-922e64ef87fe
+
 
 from flask_login import login_required, current_user
 from flask import render_template, request, jsonify, redirect, url_for
@@ -45,13 +45,13 @@ def upload():
         type = request.form.get('type')
         dataType= request.form.get('dataType')
         if type == 'upload':
-            # get the file uploaded, convert CSV to list of Dict, store as a collection for all uploads
+            # get the file uploaded, convert CSV to list of Dict
             print('Creating new collection...')
             file = request.files.get('file')
             print('Getting uploads')
             package = Upload(uploads=None).save()
             listOfDict = package.getDictFromCSV(file)
-            print('converting csv to dict: ' ,  listOfDict)
+            print('converting csv to dict')
             
             if dataType == 'staycation':
                 #save all staycations into db

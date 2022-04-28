@@ -15,13 +15,16 @@ auth = Blueprint('auth', __name__)
 def register():
     form = RegForm()
     if request.method == 'POST':
+        #validate if user exists
         if form.validate():
             existingUser = User.objects(email=form.email.data).first()
+            #if new user, save the user
             if existingUser is None:
                 hashpass = generate_password_hash(form.password.data, method='sha256')
                 newUser = User(email=form.email.data,password=hashpass, name=form.name.data).save()
                 login_user(newUser)
                 return redirect(url_for('dashboard'))
+            #else return error
             else:
                 form.email.errors.append("User already existed")
                 render_template('register.html', form=form, panel="Register")    
@@ -36,15 +39,18 @@ def login():
     form = RegForm()
     if request.method == 'POST':
         print(request.form.get('checkbox'))
+        #validate the user
         if form.validate():
             validateUser = User.objects(email=form.email.data).first()
             if validateUser:
+                #redirect to packages if user is found
                 if check_password_hash(validateUser['password'], form.password.data):
                     login_user(validateUser)
                     return redirect(url_for('packages'))
                 else:
                     form.password.errors.append("User Password Not Correct")
             else:
+                #else return error msg
                 form.email.errors.append("No Such User")
     return render_template('login.html', form=form, panel="Login")
 
@@ -55,12 +61,3 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
-#To be deleted
-@auth.route('/reset')
-@login_required
-def clean():
-    logout_user()
-    User.objects().delete()
-    Staycation.objects().delete()
-    Booking.objects().delete()
-    return render_template('login.html', form=RegForm(), response_msg="Database has been cleaned")

@@ -4,7 +4,7 @@ body {
 	font-family: "Montserrat", sans-serif;
 	background-color: #eee;
 }
-
+/* CSS for images - need for packages */
 .img-fluid {
 	max-width: 70%;
 	height: auto;
@@ -33,23 +33,11 @@ body {
 	border-radius: 5px;
 }
 
-
+/* css for top navbar */
 .top-navbar {
 	position: static;
 	background: linear-gradient(rgba(167, 165, 202, 0.548), rgba(53, 27, 87, 0.377)), url(../img/img1.jpeg);
 }
 
-/* end of navbar */
 
-/* cards */
-.card-common {
-	box-shadow: 1px 2px 5px #999;
-	transition: all 0.4s;
-}
 
-.card-common:hover {
-	box-shadow: 2px 3px 15px #999;
-	transform: translateY(-1px);
-}
-
-/* end of cards */
