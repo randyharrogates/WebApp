@@ -4,8 +4,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from flask import Blueprint, request, redirect, render_template, url_for, flash
 from forms import RegForm
 from users import User
-from staycation import Staycation
-from booking import Booking
+
 
 #blueprint defined to use auth.route
 auth = Blueprint('auth', __name__)
@@ -23,7 +22,7 @@ def register():
                 hashpass = generate_password_hash(form.password.data, method='sha256')
                 newUser = User(email=form.email.data,password=hashpass, name=form.name.data).save()
                 login_user(newUser)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('packages'))
             #else return error
             else:
                 form.email.errors.append("User already existed")

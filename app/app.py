@@ -1,5 +1,6 @@
 
 
+import json
 from flask_login import login_required, current_user
 from flask import render_template, request, jsonify, redirect, url_for
 from app import app, db, login_manager
@@ -12,6 +13,7 @@ from upload import Upload
 from staycation import  Staycation
 from booking import Booking
 from users import User
+from chart import Chart
 
 #Register blueprint for auth for login, logout and register
 app.register_blueprint(auth)
@@ -138,9 +140,14 @@ def loadDashboard():
         priceList = countTotalPrice(uniqueDates, i.hotel_name, i.unit_cost)
         finalNestedList.append(priceList)
     
+    #Saving chart data
+    chartResponse = json.dumps({'labels': hotelNames,'xAxis':uniqueDates, 'prices':finalNestedList})
+    chartJSON = json.loads(chartResponse)
+    Chart(chartObject=chartJSON).save()
+    
     print('Sending data to frontend...')
     #Return json object to endpoint
-    return jsonify({'labels': hotelNames, 'bookings':chartObjects, 'xAxis':uniqueDates, 'prices':finalNestedList})
+    return jsonify({'labels': hotelNames, 'xAxis':uniqueDates, 'prices':finalNestedList})
     
 @app.route("/dashboard", methods=['GET'])
 @login_required
