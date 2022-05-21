@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, DateTimeField, FloatField
 from wtforms.validators import Email, Length, InputRequired
 
-#Class for flask forms used for register
 class RegForm(FlaskForm):
-    email = StringField('Email',  validators=[InputRequired(), Email(message='Invalid email'), Length(max=30)])
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=30)])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20)])
     name = StringField('Name')

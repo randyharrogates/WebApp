@@ -6,17 +6,19 @@ from flask import render_template, request, jsonify, redirect, url_for
 from app import app, db, login_manager
 from datetime import datetime
 from mongoengine import *
+import csv
+import io
 
 
 from auth import auth
-from upload import Upload
-from staycation import  Staycation
-from booking import Booking
+from staycation import  STAYCATION
+from book import Booking
 from users import User
-from chart import Chart
+
 
 #Register blueprint for auth for login, logout and register
 app.register_blueprint(auth)
+
 
 
 #To handle login and load current user
@@ -33,7 +35,7 @@ def show_base():
 @app.route('/packages')
 @login_required
 def packages():
-    staycations = Staycation.objects()
+    staycations = STAYCATION.objects()
 
     return render_template('packages.html', name=current_user.name, panel="Package", id='specialCard', staycayList=staycations)
 
@@ -48,29 +50,29 @@ def upload():
         dataType= request.form.get('dataType')
         if type == 'upload':
             # get the file uploaded, convert CSV to list of Dict
-            print('Creating new collection...')
-            file = request.files.get('file')
-            print('Getting uploads')
-            package = Upload(uploads=None).save()
-            listOfDict = package.getDictFromCSV(file)
             print('converting csv to dict')
-            
+            file = request.files.get('file')
+            data = file.read().decode('utf-8')
+            dict_reader = csv.DictReader(io.StringIO(data), delimiter=',', quotechar='"')
+            file.close()
             if dataType == 'staycation':
                 #save all staycations into db
-                for item in listOfDict:
-                    Staycation(**item).save()
+                for item in dict_reader:
+                    newStaycaytion = STAYCATION()
+                    newStaycaytion.saveFileToDB(item)
                 print('Staycations saved')
-                
             elif dataType == 'users':
                 #save all users into db
-                for item in listOfDict:
-                    User(**item).save()
+                for item in dict_reader:
+                    newUser = User()
+                    newUser.saveFileToDB(item)
                 print('users saved')
                 #Users implementation
             elif dataType == 'booking':
                 #save all bookings into db
-                for item in listOfDict:
-                    Booking(**item).save()
+                for item in dict_reader:
+                    newBooking = Booking()
+                    newBooking.saveFileToDB(item)
                 print('Bookings saved')
                 #Booking implementation
         return render_template("upload.html", name=current_user.name, panel="Upload")
@@ -81,7 +83,7 @@ def upload():
 @login_required
 def booking(hotelId):
     #Get the staycation using hoteliDs
-    currentStaycay = Staycation.objects(id=hotelId)
+    currentStaycay = STAYCATION.objects(id=hotelId)
     
     if request.method == 'GET':
         print('Getting booking template for: ' + hotelId)
@@ -89,15 +91,15 @@ def booking(hotelId):
     elif request.method == 'POST':
         print('Creating new Booking for ', current_user.name)
         #implement saving of booking here
+        #Get date, customer email adn hotelname from frontend
         dateForm = request.form['bookingDatePicker']
-    
-        # get proper date to store
-        newDate = datetime.strptime(dateForm, "%Y-%m-%d")
+        customer = current_user.email
         for i in currentStaycay:
             hotelName = i.hotel_name
         #Create new booking
-        newBooking = Booking(customer=current_user.email, check_in_date=newDate, hotel_name=hotelName )
-        newBooking.save()
+        newBooking = Booking()
+        print(f'date: {dateForm} customer email: {customer} hotelName: {hotelName}')
+        newBooking.saveOneBookingToDB(dateForm, customer, hotelName)
         
         
         return redirect(url_for('packages'))
@@ -109,6 +111,11 @@ def loadDashboard():
     #Get all booking objects
     print('Getting Booking objects...')
     chartObjects = Booking.objects()
+    hotelNames = STAYCATION.objects.distinct('hotel_name')
+    for i in chartObjects:
+        pass
+    
+    
     xAxisObj = []
     xAxis = []
     #Get dates
@@ -123,9 +130,9 @@ def loadDashboard():
         xAxis.append(i.strftime("%Y-%m-%d"))
     
     #get all relavant objects
-    hotelObj = Staycation.objects()
-    baseCost = Staycation.objects.distinct('unit_cost')
-    hotelNames = Staycation.objects.distinct('hotel_name') 
+    hotelObj = STAYCATION.objects()
+    baseCost = STAYCATION.objects.distinct('unit_cost')
+    # hotelNames = STAYCATION.objects.distinct('hotel_name') 
     
     
     
@@ -149,15 +156,23 @@ def loadDashboard():
     #Return json object to endpoint
     return jsonify({'labels': hotelNames, 'xAxis':uniqueDates, 'prices':finalNestedList})
     
-@app.route("/dashboard", methods=['GET'])
+@app.route("/trendChart/totalIncome", methods=['GET'])
 @login_required
-def dashboard():
-    print('Rendering Dashboard...')
-    return render_template('dashboard.html',name=current_user.name, panel="Dashboard")
+def trendChart():
+    print('Rendering Total Income...')
+    return render_template('trend_chart.html',name=current_user.name, panel="Dashboard", id='trendChart')
 
+@app.route("/trendChart/userDue", methods=['GET'])
+def userDue():
+    print('Rendering Due Per User...')
+    userObject = User.objects()
+    return render_template('trend_chart.html',name=current_user.name, panel="Dashboard", id='userDue', userObject=userObject)
 
-
-
+@app.route("/trendChart/hotelDue", methods=['GET'])
+def hotelDue():
+    print('Rendering Due Per Hotel...')
+    hotelObject = STAYCATION.objects()
+    return render_template('trend_chart.html',name=current_user.name, panel="Dashboard", id='hotelDue', hotelObject=hotelObject)
 
 #function to get list of prices of a hotel
 def countTotalPrice(listOfUniqueDates, hotelName, price):
@@ -167,7 +182,7 @@ def countTotalPrice(listOfUniqueDates, hotelName, price):
     # query for dates involved using hotel name
     listOfActualDatesByHotelStr = []
     actualDates = Booking.objects(hotel_name = hotelName)
-    staycationObj = Staycation.objects(hotel_name = hotelName)
+    staycationObj = STAYCATION.objects(hotel_name = hotelName)
     #Get the particular duration of hotel involved
     duration = 0
     for i in staycationObj:

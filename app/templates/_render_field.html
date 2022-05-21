@@ -1,10 +1,11 @@
-{% macro render_field(field) %}
 
+
+{% macro render_field(field) %}
 <!-- used to render the error during login -->
 <div class="form-group">
-    <label for="{{ field.name }} ">{{ field.label.text }}</label>
+    <label for="{{ field.name }} "><h3>{{ field.label.text.capitalize() }}</h3></label>
     {{ field(class_='form-control', **kwargs)|safe }}
-    <ul> 
+    <ul>
         {% for error in field.errors %}
         <li style="color:red;">{{ error }}</li>
         {% endfor %}
